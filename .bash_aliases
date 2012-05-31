@@ -7,7 +7,7 @@ alias la='ls -Al'
 alias ll='ls -l'
 alias ls='ls --color=auto'
 alias ss='ps -aux'
-alias update='sudo apt-get -y --force-yes update ; sudo apt-get -y --force-yes dist-upgrade'
+#alias update='sudo apt-get -y --force-yes update ; sudo apt-get -y --force-yes dist-upgrade'
 histgrep () 
 { 
     history | grep $1
