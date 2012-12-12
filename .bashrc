@@ -87,8 +87,13 @@ function prompt_funct {
   LIGHT_PURPLE="\[\033[01;35m\]"
   LIGHT_BLUE="\[\033[01;34m\]"
   COLOR_NONE="\[\e[00m\]"
+  if [ "$VIRTUAL_ENV" ] ; then
+    VENV="(`basename $VIRTUAL_ENV`)"
+  else
+    VENV=""
+  fi
 
-    PS1="\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${GREEN}$(parse_git_branch)${COLOR_NONE}\r\n$ "
+    PS1="${VENV}\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${GREEN}$(parse_git_branch)${COLOR_NONE}\r\n$ "
 }
 if [ "$color_prompt" = yes ]; then
   RED="\[\033[00;31m\]"
@@ -106,6 +111,8 @@ if [ "$color_prompt" = yes ]; then
   PROMPT_COMMAND=prompt_funct
 else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+  PS1="\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${COLOR_NONE}\r\n$ "
+  PROMPT_COMMAND=prompt_funct
 fi
 unset color_prompt force_color_prompt
 
@@ -153,4 +160,5 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-export EDITOR=vi
+export EDITOR=vim
+export HADOOP_HOME=/usr/lib/hadoop
