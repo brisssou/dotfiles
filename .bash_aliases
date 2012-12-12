@@ -10,7 +10,7 @@ alias la='ls -Al'
 alias ll='ls -l'
 alias dot='ls .[a-zA-Z0-9_]*'
 alias ss='ps -aux'
-alias update='sudo apt-fast -y --force-yes update ; sudo apt-fast -y --force-yes dist-upgrade'
+#alias update='sudo apt-fast -y --force-yes update ; sudo apt-fast -y --force-yes dist-upgrade'
 alias apt-get='apt-fast'
 alias repload_unity="DISPLAY=:0 unity --replace"
 alias repload_compiz="DISPLAY=:0 compiz --replace"
@@ -50,7 +50,3 @@ watch ()
         tail -f $1;
     fi
 }
-
-
-
-
