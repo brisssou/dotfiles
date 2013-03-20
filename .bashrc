@@ -16,7 +16,7 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-HISTIGNORE='rm *:svn revert*:hadoop fs -rm*'
+HISTIGNORE='rm *:sudo* rm *:svn revert*:hadoop fs -rm*:sudo* hadoop fs -rm*'
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
