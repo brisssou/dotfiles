@@ -15,38 +15,3 @@ alias apt-get='apt-fast'
 alias repload_unity="DISPLAY=:0 unity --replace"
 alias repload_compiz="DISPLAY=:0 compiz --replace"
 alias giver="/usr/bin/mono --runtime=v4.0 /usr/lib/giver/Giver.exe"
-histgrep () 
-{ 
-    history | grep $1
-}
-mkcd () 
-{ 
-    mkdir -p $1 && cd $1
-}
-psgrep () 
-{ 
-    ps aux | grep $1 | grep -v grep
-}
-quote () 
-{ 
-    echo \'${1//\'/\'\\\'\'}\'
-}
-quote_readline () 
-{ 
-    local quoted;
-    _quote_readline_by_ref "$1" ret;
-    printf %s "$ret"
-}
-set_prefix () 
-{ 
-    [ -z ${prefix:-} ] || prefix=${cur%/*}/;
-    [ -r ${prefix:-}CVS/Entries ] || prefix=""
-}
-watch () 
-{ 
-    if [ $# -ne 1 ]; then
-        tail -f nohup.out;
-    else
-        tail -f $1;
-    fi
-}
