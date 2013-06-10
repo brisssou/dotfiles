@@ -1,0 +1,36 @@
+update-repo() {
+    sudo apt-get update -o Dir::Etc::sourcelist="sources.list.d/$1" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
+}
+
+histgrep ()
+{
+    history | grep $1
+}
+
+mkcd ()
+{
+    mkdir -p $1 && cd $1
+}
+
+psgrep ()
+{
+    ps aux | grep $1 | grep -v grep
+}
+
+quote ()
+{
+    echo \'${1//\'/\'\\\'\'}\'
+}
+
+quote_readline ()
+{
+    local quoted;
+    _quote_readline_by_ref "$1" ret;
+    printf %s "$ret"
+}
+
+add-ppa-key ()
+{
+        gpg --keyserver subkeys.pgp.net --recv-keys $1
+        gpg --armor --export $1 | sudo apt-key add -
+}
