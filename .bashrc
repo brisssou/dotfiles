@@ -16,7 +16,7 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-HISTIGNORE='rm *:sudo* rm *:svn revert*:hadoop fs -rm*:sudo* hadoop fs -rm*'
+HISTIGNORE='rm *:sudo* rm *:svn revert*:hadoop fs -rm*:sudo* hadoop fs -rm*:kill *:sudo kill *'
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -52,11 +52,24 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 function parse_git_branch {
+
+  RED="\[\033[00;31m\]"
+  YELLOW="\[\033[00;33m\]"
+  GREEN="\[\033[00;32m\]"
+  BLUE="\[\033[00;34m\]"
+  LIGHT_RED="\[\033[01;31m\]"
+  LIGHT_GREEN="\[\033[01;32m\]"
+  WHITE="\[\033[01;37m\]"
+  LIGHT_GRAY="\[\033[00;37m\]"
+  LIGHT_PURPLE="\[\033[01;35m\]"
+  LIGHT_BLUE="\[\033[01;34m\]"
+  COLOR_NONE="\[\e[00m\]"
+
   git rev-parse --git-dir &> /dev/null
   git_status="$(git status 2> /dev/null)"
-  branch_pattern="^# On branch ([^${IFS}]*)"
-  remote_pattern="# Your branch is (.*) of"
-  diverge_pattern="# Your branch and (.*) have diverged"
+  branch_pattern="^On branch ([^${IFS}]*)"
+  remote_pattern="Your branch is (.*) of"
+  diverge_pattern="Your branch and (.*) have diverged"
   if [[ ! ${git_status}} =~ "working directory clean" ]]; then
     state="${LIGHT_RED}⚡"
   fi
@@ -133,10 +146,11 @@ esac
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+for aliases in ~/.bash_aliases ~/.bash_aliases_private ; do
+    if [ -f ${aliases} ]; then
+        . ${aliases}
+    fi
+done
 if [ -f ~/.bash_funcs ]; then
     . ~/.bash_funcs
 fi
@@ -167,3 +181,4 @@ fi
 
 export EDITOR=vim
 export HADOOP_HOME=/usr/lib/hadoop
+[[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"

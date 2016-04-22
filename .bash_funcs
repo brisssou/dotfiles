@@ -34,3 +34,11 @@ add-ppa-key ()
         gpg --keyserver subkeys.pgp.net --recv-keys $1
         gpg --armor --export $1 | sudo apt-key add -
 }
+
+sscreenh () {
+    ssh -t $1 'screen -q -Rd -S brice_ssh'
+}
+
+md5() {
+    echo -n "$1" | md5sum
+}
