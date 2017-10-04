@@ -30,9 +30,14 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
+if [[ $TILIX_ID ]]; then
+    source /etc/profile.d/vte-2.91.sh
+fi
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
+    xterm-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -70,7 +75,7 @@ function parse_git_branch {
   branch_pattern="^On branch ([^${IFS}]*)"
   remote_pattern="Your branch is (.*) of"
   diverge_pattern="Your branch and (.*) have diverged"
-  if [[ ! ${git_status}} =~ "working directory clean" ]]; then
+  if [[ ! ${git_status}} =~ "working tree clean" ]]; then
     state="${LIGHT_RED}⚡"
   fi
   # add an else if or two here if you want to get more specific
@@ -85,9 +90,34 @@ function parse_git_branch {
     remote="${YELLOW}↕"
   fi
   if [[ ${git_status} =~ ${branch_pattern} ]]; then
+#    if [[ "$(ssh -p 29418 -o ConnectTimeout=1 review.criteois.lan gerrit query $(git log --oneline -1 | cut -d' ' -f1) | grep rowCount | cut -d' ' -f2)" == "1" ]]; then
+#      gerrit=" ${GREEN}☑"
+#    else
+#      gerrit=" ${YELLOW}☐"
+#    fi
     branch=${BASH_REMATCH[1]}
-    echo " (${branch})${remote}${state}"
+    echo " (${branch})${remote}${state}"  #${gerrit}"
   fi
+}
+
+__vte_urlencode() (
+  # This is important to make sure string manipulation is handled
+  # byte-by-byte.
+  LC_ALL=C
+  str="$1"
+  while [ -n "$str" ]; do
+    safe="${str%%[!a-zA-Z0-9/:_\.\-\!\'\(\)~]*}"
+    printf "%s" "$safe"
+    str="${str#"$safe"}"
+    if [ -n "$str" ]; then
+      printf "%%%02X" "'$str"
+      str="${str#?}"
+    fi
+  done
+)
+
+__vte_osc7 () {
+  printf "\[\033]7;file://%s%s\007\]" "${HOSTNAME:-}" "$(__vte_urlencode "${PWD}")"
 }
 
 function prompt_funct {
@@ -108,9 +138,9 @@ function prompt_funct {
     VENV=""
   fi
 
-    PS1="${VENV}\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${GREEN}$(parse_git_branch)${COLOR_NONE}\r\n$ "
+    PS1="${VENV}\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${GREEN}$(parse_git_branch)${COLOR_NONE}\r\n$ $(__vte_osc7)"
 }
-if [ "$color_prompt" = yes ]; then
+
   RED="\[\033[00;31m\]"
   YELLOW="\[\033[00;33m\]"
   GREEN="\[\033[00;32m\]"
@@ -122,6 +152,8 @@ if [ "$color_prompt" = yes ]; then
   LIGHT_PURPLE="\[\033[01;35m\]"
   LIGHT_BLUE="\[\033[01;34m\]"
   COLOR_NONE="\[\e[00m\]"
+
+if [ "$color_prompt" = yes ]; then
   PS1="\[\e]0;\u@\h: \w\a\]\[\e]0;\u@\h: \w\a\]${LIGHT_RED}\u${LIGHT_PURPLE}@${LIGHT_GREEN}\h${COLOR_NONE}:\t:${LIGHT_BLUE}\w${COLOR_NONE}\r\n$ "
   PROMPT_COMMAND=prompt_funct
 else
@@ -165,6 +197,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
+    alias rgrep='rgrep --color=auto'
 fi
 
 # some more ls aliases
@@ -182,3 +215,12 @@ fi
 export EDITOR=vim
 export HADOOP_HOME=/usr/lib/hadoop
 [[ -s "$HOME/.qfc/bin/qfc.sh" ]] && source "$HOME/.qfc/bin/qfc.sh"
+export PATH=~/bin:$PATH:/home/blaurencin/opt/activator:~/.local/bin
+
+export NVM_DIR="/home/blaurencin/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# added by Anaconda2 4.4.0 installer
+export PATH="$PATH:/home/blaurencin/work/anaconda2/bin"
+
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
